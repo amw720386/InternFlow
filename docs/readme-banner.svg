@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="140" viewBox="0 0 880 140" role="img" aria-label="InternFlow">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#09090b"/>
+      <stop offset="100%" style="stop-color:#131315"/>
+    </linearGradient>
+  </defs>
+  <rect width="880" height="140" rx="12" fill="url(#bg)"/>
+  <rect x="2" y="2" width="876" height="136" rx="10" fill="none" stroke="rgba(67,70,85,0.35)" stroke-width="1"/>
+  <!-- DNA mark -->
+  <g transform="translate(48 42)" fill="none" stroke="#ffffff" stroke-opacity="0.92" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 8 Q22 18 12 28 Q22 38 12 48 Q22 58 12 68"/>
+    <path d="M44 8 Q34 18 44 28 Q34 38 44 48 Q34 58 44 68"/>
+    <line x1="15" y1="16" x2="41" y2="16" stroke-width="1.6" stroke-opacity="0.88"/>
+    <line x1="14" y1="24" x2="42" y2="24" stroke-width="1.6" stroke-opacity="0.88"/>
+    <line x1="15" y1="32" x2="41" y2="32" stroke-width="1.6" stroke-opacity="0.88"/>
+    <line x1="14" y1="40" x2="42" y2="40" stroke-width="1.6" stroke-opacity="0.88"/>
+    <line x1="15" y1="48" x2="41" y2="48" stroke-width="1.6" stroke-opacity="0.88"/>
+    <line x1="14" y1="56" x2="42" y2="56" stroke-width="1.6" stroke-opacity="0.88"/>
+  </g>
+  <text x="130" y="88" font-family="Segoe UI, system-ui, -apple-system, sans-serif" font-size="42" font-weight="700" letter-spacing="-0.02em" fill="#f4f4f5">InternFlow</text>
+  <text x="130" y="118" font-family="Segoe UI, system-ui, -apple-system, sans-serif" font-size="15" font-weight="500" fill="#71717a">Search, enrich, and draft outreach from PDL-backed leads</text>
+</svg>

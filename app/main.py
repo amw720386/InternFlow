@@ -27,7 +27,9 @@ if _static_dir.is_dir():
 
 app.add_middleware(
     SessionMiddleware,
-    secret_key=os.environ.get("SECRET_KEY", "dev-internflow-change-me"),
+    # YES I KNOW THIS PROJECT IS NOT MEANT TO BE USED IN PRODUCTION, 
+    # IF YOU DO WANT TO EVENTUALLY USE THIS IN PRODUCTION PLEASE CHANGE THIS
+    secret_key=os.environ.get("SECRET_KEY", "internflow-change-me"), 
     session_cookie="internflow_session",
     https_only=False,
 )

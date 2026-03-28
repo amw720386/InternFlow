@@ -1,5 +1,4 @@
 ![InternFlow](docs/readme-banner.svg)
-# InternFlow
 
 A small **FastAPI** app for running **People Data Labs** person searches, **enriching** matches with AI, and stepping through **LinkedIn and email drafts** before you send anything. Built for teams that care about biotech and life-science outreach but want one place to search, review, and configure copy without wiring five tools together.
 
@@ -104,9 +103,6 @@ Default bind: **[http://127.0.0.1:5000](http://127.0.0.1:5000)** (see `main.py`)
 | -------------------- | -------------------------------------------------------------------------------- |
 | `config.yaml`        | SQLite path and DB flags                                                         |
 | Environment / `.env` | API keys                                                                         |
-
-
-Session data (export IDs, configure profile) lives in the signed cookie; use a real `SECRET_KEY` in deployment.
 
 ---
 

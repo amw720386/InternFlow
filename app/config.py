@@ -4,7 +4,7 @@ import os
 import yaml
 from dotenv import load_dotenv
 
-from app.path_utils import PROJECT_ROOT
+from app.utils.path_utils import PROJECT_ROOT
 from app.utils.logging_utils import configure_logging
 
 load_dotenv()

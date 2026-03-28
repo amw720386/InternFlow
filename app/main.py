@@ -7,7 +7,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 import app.config  # noqa: F401
 from app import config
-from app.path_utils import PROJECT_ROOT
+from app.utils.path_utils import PROJECT_ROOT
 from app.routers import browse, configure, index, search
 from app.services import db_service
 

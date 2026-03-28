@@ -4,7 +4,7 @@ import re
 from datetime import date, datetime
 from pathlib import Path
 
-from app.path_utils import PROJECT_ROOT
+from app.utils.path_utils import PROJECT_ROOT
 
 _LOG_NAME = re.compile(r"^Internflow(-\d{4}-\d{2}-\d{2})?\.log$")
 

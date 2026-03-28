@@ -3,6 +3,41 @@
 
 A small **FastAPI** app for running **People Data Labs** person searches, **enriching** matches with AI, and stepping through **LinkedIn and email drafts** before you send anything. Built for teams that care about biotech and life-science outreach but want one place to search, review, and configure copy without wiring five tools together.
 
+---
+
+<p align="center">
+  <b>Search → browse → configure</b> in one place.
+</p>
+
+<table>
+  <tr>
+    <td width="50%" valign="top" align="center">
+      <b>Search</b><br/>
+      <sub>Filters, dataset, run query</sub><br/><br/>
+      <img src="docs/search.png" alt="Search leads" width="100%"/>
+    </td>
+    <td width="50%" valign="top" align="center">
+      <b>Browse</b><br/>
+      <sub>Grid, filters, export to configure</sub><br/><br/>
+      <img src="docs/browse.png" alt="Browse leads" width="100%"/>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" align="center">
+      <b>Lead detail</b><br/>
+      <sub>Modal on Browse — full profile</sub><br/><br/>
+      <img src="docs/browse_modal.png" alt="Lead detail modal" width="100%"/>
+    </td>
+    <td valign="top" align="center">
+      <b>Configure</b><br/>
+      <sub>Sender profile, drafts, queue</sub><br/><br/>
+      <img src="docs/configure.png" alt="Configure outreach" width="100%"/>
+    </td>
+  </tr>
+</table>
+
+---
+
 **THIS IS NOT A PRODUCTION PROJECT DEPLOYED TO A WEBSITE AS OF NOW.** To use simply clone and follow the steps indicated below.
 
 ---
@@ -10,10 +45,10 @@ A small **FastAPI** app for running **People Data Labs** person searches, **enri
 ## When to use it
 
 
-| You need…                                                          | InternFlow gives you…                                                          |
+| You need… | Intern gives you|
 | ------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
 | Filtered PDL searches with scroll tokens and credit-aware batching | Search UI with industry, location, dataset, and optional company filters       |
-| A queue of new leads while AI scores and reasons on each profile   | Browse with filters, selection, and export into a configure session            |
+| A queue of new leads while AI scores and reasons on each profile   | Browse with filters, selection, and export into a configure session |
 | Ready-to-edit outreach tied to your sender name and portfolio link | Configure: one lead at a time, copy buttons, Done / Deleted to clear the queue |
 
 ---
@@ -47,7 +82,7 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Set `**PDL_API_KEY**`, `**OPENAI_API_KEY**` (if you use enrichment). The app loads them from the environment (`[python-dotenv](https://pypi.org/project/python-dotenv/)` reads a `.env` file in the project root if present).
+Set **`PDL_API_KEY`** and **`OPENAI_API_KEY`** (if you use enrichment). The app loads them from the environment ([python-dotenv](https://pypi.org/project/python-dotenv/) reads a `.env` file in the project root if present).
 
 Build CSS once (or whenever templates change):
 

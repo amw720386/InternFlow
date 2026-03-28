@@ -1,0 +1,47 @@
+{# Lead detail overlay; browse page builds body HTML in inline script #}
+<div id="lead-modal-overlay"
+     class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 p-4 backdrop-blur-[2px] sm:p-6"
+     role="presentation">
+  <div id="lead-modal"
+       class="flex max-h-[min(85vh,880px)] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-zinc-700/60 bg-[#1c1b1d] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.65)]"
+       role="dialog"
+       aria-modal="true"
+       aria-label="Lead details"
+       onclick="event.stopPropagation()">
+    <div class="flex shrink-0 items-center justify-between gap-4 border-b border-zinc-800/90 bg-[#161618] px-4 py-3 sm:px-5">
+      <span class="font-display text-sm font-semibold tracking-wide text-zinc-500">Lead details</span>
+      <button type="button"
+              id="lead-modal-close"
+              class="group flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-600/50 bg-zinc-900/80 text-zinc-300 transition-colors hover:border-zinc-500 hover:bg-zinc-800 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50"
+              aria-label="Close">
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div id="lead-modal-body" class="lead-modal-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5 sm:px-6 sm:py-6"></div>
+  </div>
+</div>
+<style>
+  /* Dark scrollbar — matches app chrome (avoids bright white system scrollbar) */
+  .lead-modal-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #52525b #18181b;
+  }
+  .lead-modal-scroll::-webkit-scrollbar {
+    width: 10px;
+  }
+  .lead-modal-scroll::-webkit-scrollbar-track {
+    background: #18181b;
+    border-radius: 8px;
+    margin: 4px 0;
+  }
+  .lead-modal-scroll::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #52525b 0%, #3f3f46 100%);
+    border-radius: 8px;
+    border: 2px solid #18181b;
+  }
+  .lead-modal-scroll::-webkit-scrollbar-thumb:hover {
+    background: #71717a;
+  }
+</style>

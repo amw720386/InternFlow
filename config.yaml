@@ -1,0 +1,3 @@
+database:
+  sqlite_path: db/internflow.db
+  echo: false

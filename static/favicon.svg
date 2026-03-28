@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+  <!-- White-on-transparent DNA double helix (reads at 16–32px favicon size) -->
+  <g stroke="#ffffff" stroke-opacity="0.92" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 4 Q15.5 8 9 12 Q15.5 16 9 20 Q15.5 24 9 28" fill="none" />
+    <path d="M23 4 Q16.5 8 23 12 Q16.5 16 23 20 Q16.5 24 23 28" fill="none" />
+  </g>
+  <g stroke="#ffffff" stroke-opacity="0.88" stroke-width="1.2" stroke-linecap="round">
+    <line x1="11" y1="7" x2="21" y2="7" />
+    <line x1="10.5" y1="11.5" x2="21.5" y2="11.5" />
+    <line x1="11" y1="16" x2="21" y2="16" />
+    <line x1="10.5" y1="20.5" x2="21.5" y2="20.5" />
+    <line x1="11" y1="25" x2="21" y2="25" />
+  </g>
+</svg>

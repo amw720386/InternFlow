@@ -1,0 +1,12 @@
+.env
+
+.internflow/
+node_modules/
+
+__pycache__/
+db/
+logs/
+
+migrate.py
+
+app.css

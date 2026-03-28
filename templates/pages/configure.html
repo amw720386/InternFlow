@@ -1,0 +1,347 @@
+{% extends "base.html" %}
+{% block title %}Configure — InternFlow{% endblock %}
+{% block head %}
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+{% endblock %}
+{% block content %}
+<div class="relative pt-3 max-w-[1152px] overflow-x-hidden">
+  <div class="bg-canvas px-4 pb-14 pt-10 sm:px-8 lg:px-10">
+  {% if not has_export %}
+  <div class="rounded-lg border border-zinc-800/80 bg-[#1c1b1d] p-8 text-center shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] sm:p-10">
+    <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg border border-if-link/20 bg-if-link/10">
+      <svg class="h-6 w-6 text-if-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0 0l4-4m-4 4l-4-4"/></svg>
+    </div>
+    <p class="text-sm leading-relaxed text-if-muted">
+      Export from Browse to get started. Select leads, then use <strong class="font-semibold text-if-fg">Export to configure</strong>.
+    </p>
+    <a href="/browse" class="mt-6 inline-flex rounded-md bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-900/20 hover:bg-blue-500">Go to browse</a>
+  </div>
+
+  {% elif pending_profile %}
+  <div class="rounded-lg border border-if-border bg-[#1c1b1d] p-7 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] sm:p-8">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-start">
+      <div class="flex size-10 shrink-0 items-center justify-center rounded border border-if-link/20 bg-if-link/10">
+        <svg class="h-5 w-5 text-if-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+      </div>
+      <div>
+        <h1 class="font-display text-xl font-bold text-zinc-100">Your details</h1>
+        <p class="mt-1 text-sm text-if-muted">Configure your professional identity for outreach sequences.</p>
+      </div>
+    </div>
+    <form method="post" action="/configure/profile" class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <label class="flex flex-col gap-2">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-if-muted">Full name</span>
+        <input name="sender_name" required placeholder="Alex Kim"
+               class="rounded-md border-0 bg-[#0e0e10] px-4 py-3 text-sm text-if-fg ring-1 ring-inset ring-zinc-700/50 placeholder:text-zinc-600 focus:outline-none focus:ring-blue-500/50" />
+      </label>
+      <label class="flex flex-col gap-2">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-if-muted">First name</span>
+        <input name="sender_first_name" placeholder="Alex"
+               class="rounded-md border-0 bg-[#0e0e10] px-4 py-3 text-sm text-if-fg ring-1 ring-inset ring-zinc-700/50 placeholder:text-zinc-600 focus:outline-none focus:ring-blue-500/50" />
+      </label>
+      <label class="flex flex-col gap-2 sm:col-span-2 lg:col-span-1">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-if-muted">Portfolio URL</span>
+        <input name="portfolio_url" type="url" placeholder="https://…"
+               class="rounded-md border-0 bg-[#0e0e10] px-4 py-3 text-sm text-if-fg ring-1 ring-inset ring-zinc-700/50 placeholder:text-zinc-600 focus:outline-none focus:ring-blue-500/50" />
+      </label>
+      <div class="flex flex-col gap-3 border-t border-zinc-800/80 pt-6 sm:col-span-2 sm:flex-row sm:items-center sm:justify-end lg:col-span-3">
+        <button type="submit" class="w-full rounded-md bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-2.5 text-sm font-bold text-white shadow-[0_10px_15px_-3px_rgba(37,99,235,0.25)] hover:from-blue-500 hover:to-blue-600 sm:w-auto">
+          Save and view drafts
+        </button>
+      </div>
+    </form>
+  </div>
+
+  {% elif ready and queue_empty %}
+  <div id="queue-exhausted" class="rounded-xl border border-emerald-500/25 bg-emerald-950/20 px-6 py-12 text-center sm:px-10">
+    <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10">
+      <svg class="h-7 w-7 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <p class="font-display text-xl font-bold text-emerald-100">Queue exhausted</p>
+    <p class="mx-auto mt-3 max-w-md text-sm leading-relaxed text-emerald-200/85">Every lead in this export is marked <span class="text-zinc-200">DONE</span> or <span class="text-zinc-200">DELETED</span>. They stay hidden in Browse unless you enable &quot;Show done / deleted&quot;.</p>
+    <a href="/browse" class="mt-8 inline-flex rounded-md bg-emerald-600 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-900/20 hover:bg-emerald-500">Back to browse</a>
+    <form method="post" action="/configure/clear" class="mt-8">
+      <button type="submit" class="text-xs font-medium text-zinc-500 underline decoration-zinc-600 hover:text-zinc-400">Clear export session</button>
+    </form>
+  </div>
+
+  {% elif ready and cards %}
+  <div id="queue-processing" class="space-y-8">
+    <div id="configure-queue-meta" class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="size-2 shrink-0 rounded-full bg-emerald-400" aria-hidden="true"></span>
+          <span class="text-xs font-bold uppercase tracking-[0.12em] text-emerald-400">Active export session</span>
+        </div>
+        <h2 class="font-display text-2xl font-bold tracking-tight text-zinc-100">Queue processing</h2>
+        <p class="max-w-md text-sm text-if-muted">Swipe left to delete or tap <strong class="font-medium text-zinc-300">Done</strong> after you send outreach.</p>
+      </div>
+      <div class="text-left lg:text-right">
+        <p class="text-[10px] font-bold uppercase tracking-tight text-zinc-500">Session progress</p>
+        <p id="configure-counter" class="font-display text-2xl font-light text-zinc-100 sm:text-3xl"></p>
+      </div>
+    </div>
+
+    <div id="configure-card-shell" class="relative overflow-hidden rounded-lg border border-if-border bg-[#1c1b1d] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]">
+      <p class="pointer-events-none absolute left-6 top-1/2 z-0 hidden -translate-y-1/2 text-xs font-semibold uppercase tracking-wider text-red-500/35 sm:block">Swipe ← delete</p>
+      <div id="configure-slide" class="relative z-10 touch-pan-y bg-[#1c1b1d] p-6 transition-transform duration-200 ease-out sm:p-10"></div>
+    </div>
+
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <button type="button" id="cfg-delete" class="inline-flex items-center justify-center gap-2 rounded-md border border-orange-500/35 bg-orange-950/20 px-6 py-3 text-sm font-bold uppercase tracking-wide text-orange-200 hover:bg-orange-950/40">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6M10 11v6M14 11v6"/></svg>
+        Delete (swipe left)
+      </button>
+      <button type="button" id="cfg-done" class="inline-flex items-center justify-center gap-2 rounded-md bg-emerald-600 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-900/25 hover:bg-emerald-500">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Done
+      </button>
+    </div>
+
+    <div id="configure-all-done" class="hidden rounded-xl border border-emerald-500/25 bg-emerald-950/20 px-6 py-12 text-center">
+      <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10">
+        <svg class="h-7 w-7 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <p class="font-display text-xl font-bold text-emerald-100">Queue exhausted</p>
+      <p class="mt-2 text-sm text-emerald-200/85">Nothing left in this export. Pick more leads from Browse.</p>
+      <a href="/browse" class="mt-8 inline-flex rounded-md bg-emerald-600 px-8 py-3 text-sm font-bold text-white hover:bg-emerald-500">Browse</a>
+    </div>
+
+    <form method="post" action="/configure/clear" class="border-t border-zinc-800/80 pt-8 text-center">
+      <button type="submit" class="rounded-md border border-zinc-700 bg-transparent px-6 py-2.5 text-sm font-semibold text-zinc-400 hover:border-zinc-600 hover:text-zinc-200">Clear export &amp; start over</button>
+    </form>
+    <p class="text-center font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-600">Secure processing active</p>
+  </div>
+
+  <script id="configure-cards-json" type="application/json">{{ cards | tojson }}</script>
+  <script>
+  (function () {
+    var raw = document.getElementById("configure-cards-json").textContent;
+    var cards = JSON.parse(raw);
+    var i = 0;
+    var touchStartX = null;
+
+    var statusUrl = "/configure/lead/status";
+
+    function esc(s) {
+      var d = document.createElement("div");
+      d.textContent = s == null ? "" : String(s);
+      return d.innerHTML;
+    }
+
+    function initials(name) {
+      var s = (name || "?").trim();
+      if (!s) return "?";
+      var parts = s.split(/\s+/).filter(Boolean);
+      if (parts.length >= 2)
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+      return s.slice(0, 2).toUpperCase();
+    }
+
+    function scoreBar(label, value, max, colorClass) {
+      colorClass = colorClass || "bg-emerald-500";
+      var pct = max > 0 ? Math.round((value / max) * 100) : 0;
+      return (
+        '<div class="mt-3">' +
+        '<div class="flex justify-between gap-2 text-[11px] text-zinc-500"><span>' +
+        esc(label) +
+        '</span><span class="font-mono text-zinc-400">' +
+        Math.round(value) +
+        "/" +
+        max +
+        "</span></div>" +
+        '<div class="mt-1.5 h-2 rounded-full bg-zinc-800"><div class="h-full rounded-full ' +
+        colorClass +
+        '" style="width:' +
+        pct +
+        '%"></div></div></div>'
+      );
+    }
+
+    function showAllDone() {
+      document.getElementById("configure-card-shell").classList.add("hidden");
+      document.getElementById("cfg-done").classList.add("hidden");
+      document.getElementById("cfg-delete").classList.add("hidden");
+      var meta = document.getElementById("configure-queue-meta");
+      if (meta) meta.classList.add("hidden");
+      document.getElementById("configure-all-done").classList.remove("hidden");
+    }
+
+    function shiftAfterAction() {
+      cards.splice(i, 1);
+      if (cards.length === 0) { showAllDone(); return; }
+      i = Math.min(i, cards.length - 1);
+      render();
+    }
+
+    function postStatus(leadId, status) {
+      return fetch(statusUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ lead_id: leadId, status: status }),
+      }).then(function (r) { if (!r.ok) throw new Error("request failed"); return r.json(); });
+    }
+
+    function render() {
+      var c = cards[i];
+      var shell = document.getElementById("configure-card-shell");
+      var slide = document.getElementById("configure-slide");
+      if (!c) { showAllDone(); return; }
+      shell.classList.remove("hidden");
+
+      var hasEmail = !!(c.email && c.email_body);
+      var liUrl = c.linkedin_url || "";
+      var fit = c.fit_score != null ? Math.round(c.fit_score) : null;
+      var highFit = fit != null && fit >= 80;
+      var pct = fit != null ? fit + "%" : "—";
+
+      slide.innerHTML =
+        '<div class="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">' +
+          '<div class="flex gap-5">' +
+            '<div class="flex size-16 shrink-0 items-center justify-center rounded-lg border border-zinc-600/40 bg-gradient-to-br from-zinc-700 to-zinc-800 font-display text-lg font-bold text-zinc-200">' +
+              esc(initials(c.full_name || c.first_name)) +
+            "</div>" +
+            '<div class="min-w-0">' +
+              '<h3 class="font-display text-2xl font-bold leading-tight text-zinc-100">' + esc(c.full_name || c.first_name || "Lead") + "</h3>" +
+              '<p class="mt-1 text-lg font-medium text-if-link">' + esc(c.title || "—") + " · " + esc(c.company_name || "") + "</p>" +
+              '<div class="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-if-muted">' +
+                (liUrl
+                  ? '<a href="' + esc(liUrl) + '" target="_blank" rel="noopener noreferrer" class="font-medium text-if-link hover:underline">LinkedIn profile</a>'
+                  : "") +
+                (c.email
+                  ? '<span class="inline-flex items-center gap-1.5"><svg class="h-3.5 w-3.5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>' + esc(c.email) + "</span>"
+                  : '<span class="text-zinc-600">No email on file</span>') +
+              "</div>" +
+            "</div>" +
+          "</div>" +
+          '<div class="flex shrink-0 flex-col items-start gap-2 lg:items-end">' +
+            (fit != null
+              ? '<span class="rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-400">' +
+                (highFit ? "High compatibility" : "Compatibility") +
+                "</span>" +
+                '<span class="font-display text-4xl font-bold text-zinc-100">' + esc(String(pct)) + "</span>"
+              : "") +
+          "</div>" +
+        "</div>" +
+        '<div class="mt-10 grid gap-6 lg:grid-cols-2 lg:gap-8">' +
+          '<div class="rounded-lg border border-zinc-800/80 bg-[#0e0e10] p-5">' +
+            '<div class="flex items-center justify-between gap-2">' +
+              '<span class="text-[10px] font-bold uppercase tracking-wider text-if-muted">LinkedIn DM</span>' +
+              '<button type="button" class="browse-copy-li rounded bg-zinc-700 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide text-zinc-100 hover:bg-zinc-600">Copy</button>' +
+            "</div>" +
+            '<pre class="lead-modal-scroll mt-4 max-h-64 overflow-auto whitespace-pre-wrap rounded border border-zinc-800/60 bg-[rgba(9,9,11,0.5)] p-4 text-xs leading-relaxed text-zinc-300">' +
+              esc(c.linkedin_filled) +
+            "</pre>" +
+          "</div>" +
+          '<div class="rounded-lg border border-zinc-800/80 bg-[#0e0e10] p-5">' +
+            '<div class="flex flex-wrap items-center justify-between gap-2">' +
+              '<span class="text-[10px] font-bold uppercase tracking-wider text-if-muted">Email sequence</span>' +
+              (hasEmail
+                ? '<div class="flex flex-wrap gap-2">' +
+                  '<button type="button" class="browse-copy-subj rounded bg-zinc-700 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide text-zinc-100 hover:bg-zinc-600">Copy subj</button>' +
+                  '<button type="button" class="browse-copy-em rounded bg-zinc-700 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide text-zinc-100 hover:bg-zinc-600">Copy body</button>' +
+                  "</div>"
+                : "") +
+            "</div>" +
+            (hasEmail
+              ? '<p class="mt-3 text-xs text-zinc-500">Subject: <span class="text-zinc-300">' + esc(c.email_subject) + "</span></p>" +
+                '<pre class="lead-modal-scroll mt-2 max-h-64 overflow-auto whitespace-pre-wrap rounded border border-zinc-800/60 bg-[rgba(9,9,11,0.5)] p-4 text-xs leading-relaxed text-zinc-300">' +
+                esc(c.email_body) +
+                "</pre>"
+              : '<p class="mt-6 text-sm text-zinc-600">No email for this lead — use LinkedIn only.</p>') +
+          "</div>" +
+        "</div>" +
+        '<div class="mt-8 rounded-lg border border-zinc-800/80 bg-[#0e0e10]/90 p-5">' +
+          '<p class="text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500">Analysis &amp; fit</p>' +
+          (c.fit_score != null
+            ? '<p class="mt-2 font-display text-lg font-semibold text-emerald-400">' + Math.round(c.fit_score) + '<span class="text-sm font-normal text-zinc-500">/100</span></p>'
+            : "") +
+          (c.score_web_activity != null ? scoreBar("Web activity", c.score_web_activity, 30, "bg-emerald-500") : "") +
+          (c.score_hiring_signals != null ? scoreBar("Hiring signals", c.score_hiring_signals, 40, "bg-emerald-500") : "") +
+          (c.score_company_size != null ? scoreBar("Company size fit", c.score_company_size, 30, "bg-violet-500") : "") +
+          (c.message_score != null
+            ? '<p class="mt-4 border-t border-zinc-800/80 pt-3 text-xs text-zinc-500">Message quality · <span class="font-medium text-zinc-300">' + Math.round(c.message_score) + "/100</span></p>"
+            : "") +
+          '<p class="mt-4 text-sm leading-relaxed text-zinc-400">' + esc(c.reasoning || "") + "</p>" +
+        "</div>";
+
+      slide.querySelector(".browse-copy-li")?.addEventListener("click", function () {
+        navigator.clipboard.writeText(c.linkedin_filled || "");
+      });
+      slide.querySelector(".browse-copy-em")?.addEventListener("click", function () {
+        navigator.clipboard.writeText(c.email_body || "");
+      });
+      slide.querySelector(".browse-copy-subj")?.addEventListener("click", function () {
+        navigator.clipboard.writeText(c.email_subject || "");
+      });
+
+      document.getElementById("configure-counter").innerHTML =
+        'Remaining in this export: <span class="font-bold text-if-link">' + cards.length + "</span>";
+    }
+
+    function setSlideTransform(dx) {
+      document.getElementById("configure-slide").style.transform = dx ? "translateX(" + dx + "px)" : "";
+    }
+
+    document.getElementById("cfg-done").addEventListener("click", function () {
+      var c = cards[i]; if (!c) return;
+      var btn = this; btn.disabled = true;
+      postStatus(c.lead_id, "DONE")
+        .then(function () { shiftAfterAction(); })
+        .catch(function () { alert("Could not save status."); })
+        .finally(function () { btn.disabled = false; });
+    });
+
+    document.getElementById("cfg-delete").addEventListener("click", function () {
+      var c = cards[i]; if (!c) return;
+      var btn = this; btn.disabled = true;
+      postStatus(c.lead_id, "DELETED")
+        .then(function () { shiftAfterAction(); })
+        .catch(function () { alert("Could not save status."); })
+        .finally(function () { btn.disabled = false; });
+    });
+
+    var shell = document.getElementById("configure-card-shell");
+    shell.addEventListener("touchstart", function (e) {
+      if (e.changedTouches.length) touchStartX = e.changedTouches[0].clientX;
+    }, { passive: true });
+    shell.addEventListener("touchmove", function (e) {
+      if (touchStartX == null || !e.changedTouches.length) return;
+      var dx = e.changedTouches[0].clientX - touchStartX;
+      setSlideTransform(Math.max(-120, Math.min(120, dx)));
+    }, { passive: true });
+    shell.addEventListener("touchend", function (e) {
+      if (touchStartX == null || !e.changedTouches.length) return;
+      var dx = e.changedTouches[0].clientX - touchStartX;
+      touchStartX = null;
+      setSlideTransform(0);
+      if (dx < -72) document.getElementById("cfg-delete").click();
+    }, { passive: true });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowLeft") document.getElementById("cfg-delete").click();
+      if (e.key === "ArrowRight") document.getElementById("cfg-done").click();
+    });
+
+    render();
+  })();
+  </script>
+
+  {% elif ready %}
+  <p class="text-sm text-zinc-500">No matching leads found. <a href="/browse" class="font-medium text-if-link hover:underline">Browse</a></p>
+  {% endif %}
+
+  </div>
+  </div>
+</div>
+<style>
+  .lead-modal-scroll { scrollbar-width: thin; scrollbar-color: #52525b #18181b; }
+  .lead-modal-scroll::-webkit-scrollbar { width: 8px; }
+  .lead-modal-scroll::-webkit-scrollbar-track { background: #18181b; border-radius: 6px; }
+  .lead-modal-scroll::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 6px; border: 2px solid #18181b; }
+  .lead-modal-scroll::-webkit-scrollbar-thumb:hover { background: #52525b; }
+</style>
+{% endblock %}

@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+{% block title %}Search — InternFlow{% endblock %}
+{% block head %}
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+{% endblock %}
+{% block content %}
+<div class="relative pt-3 max-w-[1152px] overflow-x-hidden text-left">
+  <div class="bg-canvas px-8 pb-10 pt-8 lg:px-10">
+    <section class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-8">
+      <div class="min-w-0 max-w-2xl flex-1 space-y-4">
+        <h1 class="font-display text-4xl font-bold tracking-tight text-if-fg">Find leads</h1>
+      </div>
+      <div class="flex shrink-0 flex-col items-start gap-2 lg:items-end">
+        {% if search_busy %}
+        <div class="flex items-center gap-3 rounded border border-zinc-800/50 bg-zinc-900/50 px-[17px]">
+          <span class="size-2 shrink-0 rounded-full bg-amber-500" aria-hidden="true"></span>
+          <span class="text-xs font-medium uppercase tracking-[0.1em] text-amber-500">Search in progress…</span>
+        </div>
+        {% endif %}
+        <p class="font-mono text-[10px] uppercase tracking-wider text-if-muted">
+          {{ pending_count }} lead{{ 's' if pending_count != 1 else '' }} pending in the database
+        </p>
+      </div>
+    </section>
+
+    {% if success %}
+    <div id="search-success-banner" class="mt-10 flex gap-3 rounded border border-emerald-500/20 bg-emerald-500/10 px-[17px] py-3 text-sm font-medium text-emerald-300">
+      <svg class="mt-0.5 size-5 shrink-0 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>{{ success }}</span>
+    </div>
+    {% endif %}
+    {% if error %}
+    <div class="mt-10 rounded border border-red-500/30 bg-red-500/10 px-[17px] py-3 text-sm text-red-200">{{ error }}</div>
+    {% endif %}
+    <div id="search-poll-error" class="mt-10 hidden rounded border border-red-500/30 bg-red-500/10 px-[17px] py-3 text-sm text-red-200" role="alert"></div>
+
+    <div class="mt-10 grid grid-cols-1 gap-10 xl:grid-cols-12 xl:gap-12">
+      <div class="xl:col-span-5">
+        <form method="post" id="search-form" class="flex max-w-md flex-col gap-6">
+          <div class="space-y-2">
+            <label class="text-xs font-bold uppercase tracking-[0.06em] text-if-muted" for="search-industry">Industry</label>
+            <div class="relative">
+              <select id="search-industry" name="industry" class="w-full appearance-none rounded-md border border-if-border bg-[#0e0e10] py-2.5 pl-3 pr-10 text-sm text-if-fg outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30">
+                <option value="" {% if not search_form.industry %}selected{% endif %}>Any</option>
+                {% for opt in industry_options %}
+                <option value="{{ opt }}" {% if search_form.industry == opt %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+              </select>
+              <span class="pointer-events-none absolute right-3 top-1/2 size-[21px] -translate-y-1/2 text-zinc-500" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-xs font-bold uppercase tracking-[0.06em] text-if-muted" for="search-size">How many people</label>
+            <input id="search-size" type="number" name="size" value="{{ search_form.size }}" min="1" max="100"
+                   class="w-full rounded-md border border-if-border bg-[#0e0e10] px-3 py-2.5 text-sm text-if-fg outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30" />
+            <p class="text-[10px] leading-[15px] text-zinc-500">Target sample size per query (max 100).</p>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-xs font-bold uppercase tracking-[0.06em] text-if-muted" for="search-dataset">PDL dataset</label>
+            <div class="relative">
+              <select id="search-dataset" name="dataset" class="w-full appearance-none rounded-md border border-if-border bg-[#0e0e10] py-2.5 pl-3 pr-10 text-sm text-if-fg outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30">
+                <option value="resume" {% if search_form.dataset == "resume" %}selected{% endif %}>Resume data</option>
+                <option value="all" {% if search_form.dataset == "all" %}selected{% endif %}>All</option>
+                <option value="email" {% if search_form.dataset == "email" %}selected{% endif %}>Email</option>
+                <option value="phone" {% if search_form.dataset == "phone" %}selected{% endif %}>Phone</option>
+                <option value="mobile_phone" {% if search_form.dataset == "mobile_phone" %}selected{% endif %}>Mobile phone</option>
+                <option value="developer" {% if search_form.dataset == "developer" %}selected{% endif %}>Developer</option>
+              </select>
+              <span class="pointer-events-none absolute right-3 top-1/2 size-[21px] -translate-y-1/2 text-zinc-500" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="space-y-4 pt-2">
+            <label class="flex cursor-pointer items-center gap-3">
+              <input type="checkbox" name="require_linkedin" class="size-5 rounded border border-white/10 bg-[#0e0e10] text-emerald-400 focus:ring-blue-500/40"
+                     {% if search_form.require_linkedin %}checked{% endif %} />
+              <span class="text-sm text-if-fg">Only people with a LinkedIn username in PDL</span>
+            </label>
+            <label class="flex cursor-pointer items-start gap-3">
+              <input type="checkbox" name="include_founders" value="1" class="mt-1 size-5 shrink-0 rounded border border-white/10 bg-[#0e0e10] accent-emerald-400 focus:ring-2 focus:ring-blue-500/40"
+                     {% if search_form.include_founders %}checked{% endif %} />
+              <span class="min-w-0">
+                <span class="block text-sm text-if-fg">Include founders, CEOs &amp; engineering leaders</span>
+                <span class="mt-1 block text-[10px] uppercase tracking-tight text-zinc-500">Recommended for startups — many have no HR title in the data</span>
+              </span>
+            </label>
+          </div>
+
+          <details class="overflow-hidden rounded-lg border border-white/5 bg-[#1c1b1d] open:border-if-border" {% if search_form.details_open %}open{% endif %}>
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-4 text-sm font-semibold tracking-wide text-if-fg [&::-webkit-details-marker]:hidden">
+              <span class="flex items-center gap-2">
+                <svg class="size-[14px] text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                Optional filters
+              </span>
+              <svg class="size-3 shrink-0 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <div class="flex flex-col gap-4 border-t border-white/5 px-4 pb-4 pt-3 text-sm text-if-muted">
+              <label class="flex flex-col gap-2">
+                <span>Company name (contains)</span>
+                <input type="text" name="job_company_name" value="{{ search_form.job_company_name }}" placeholder="e.g. acme"
+                       class="rounded-md border border-if-border bg-[#0e0e10] px-3 py-2 text-if-fg outline-none focus:border-blue-500/50" />
+              </label>
+              <label class="flex flex-col gap-2">
+                <span>Country (exact term, usually lowercase)</span>
+                <input type="text" name="location_country" value="{{ search_form.location_country }}" placeholder="united states"
+                       class="rounded-md border border-if-border bg-[#0e0e10] px-3 py-2 text-if-fg outline-none focus:border-blue-500/50" />
+              </label>
+              <label class="flex flex-col gap-2">
+                <span>Region / state</span>
+                <input type="text" name="location_region" value="{{ search_form.location_region }}" placeholder="e.g. california"
+                       class="rounded-md border border-if-border bg-[#0e0e10] px-3 py-2 text-if-fg outline-none focus:border-blue-500/50" />
+              </label>
+            </div>
+          </details>
+
+          <button type="submit" id="search-submit" {% if search_busy %}disabled{% endif %}
+                  class="relative flex h-12 w-full items-center justify-center gap-3 rounded-md bg-blue-600 text-base font-bold text-zinc-100 shadow-[0_10px_15px_-3px_rgba(30,58,138,0.2),0_4px_6px_-4px_rgba(30,58,138,0.2)] hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50">
+            <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M4.5 16.5c0-1.5 1.5-3 3-4.5L19 4.5M19 4.5h-6M19 4.5v6" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M19.5 7.5c0 9-6.5 14.5-14.5 14.5H4" stroke-linecap="round"/>
+            </svg>
+            {% if search_busy %}Search running…{% else %}Run search{% endif %}
+          </button>
+        </form>
+      </div>
+
+      <aside class="flex min-w-0 flex-col gap-8 xl:col-span-7">
+        <div class="relative overflow-hidden rounded-lg border border-white/5 bg-[#201f22]">
+          <div class="pointer-events-none absolute inset-0 opacity-[0.12]" aria-hidden="true">
+            <img src="https://www.figma.com/api/mcp/asset/a3650cec-9a59-41c8-9061-093316332ba2" alt="" class="h-full w-full object-cover" onerror="this.closest('div').style.display='none'" />
+          </div>
+          <div class="relative space-y-6 p-8">
+            <div class="flex items-center gap-3">
+              <svg class="size-[18px] text-if-fg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+              <h2 class="font-display text-xl font-bold text-if-fg">System resolution</h2>
+            </div>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div class="rounded border border-white/5 bg-[#0e0e10] p-[17px]">
+                <p class="font-mono text-[10px] uppercase tracking-wider text-if-muted">Search depth</p>
+                <p class="mt-1 font-mono text-lg text-if-link">Tier 4 / Global</p>
+              </div>
+              <div class="rounded border border-white/5 bg-[#0e0e10] p-[17px]">
+                <p class="font-mono text-[10px] uppercase tracking-wider text-if-muted">Pipeline</p>
+                <p class="mt-1 font-mono text-lg text-emerald-400">AI enrichment</p>
+              </div>
+            </div>
+            <p class="text-xs leading-relaxed text-if-muted">
+              The search queries PDL’s person index. Including <strong class="font-semibold text-if-fg">founders &amp; engineering leaders</strong> (when enabled) improves match quality for startup-facing roles where titles are sparse.
+            </p>
+            <div class="flex flex-wrap gap-4 text-xs font-bold">
+              <a href="https://docs.peopledatalabs.com/docs/" class="inline-flex items-center gap-1 text-if-link hover:underline" target="_blank" rel="noopener">People Data Labs docs</a>
+              <a href="/browse" class="text-zinc-500 hover:text-zinc-400">Open browse</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative overflow-hidden rounded border border-white/5 bg-[#0e0e10] font-mono">
+          <p class="absolute right-4 top-2 text-[8px] uppercase tracking-[0.2em] text-zinc-600">Sequence stream</p>
+          <div class="p-4 pt-8 text-[10px] leading-[15px] text-emerald-500/70">
+            <p>SCROLL_KEY: ACTIVE — DATASET: PDL_ENRICH</p>
+            <p>QUEUE: PENDING_ROWS · BROWSE FOR LIVE STATUS</p>
+            <p>NOTE: ONE CREDIT PER PROFILE RETURNED</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+<script>
+(function () {
+  var form = document.getElementById("search-form");
+  var btn = document.getElementById("search-submit");
+  if (!form) return;
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (btn && btn.disabled) return;
+    if (btn) { btn.disabled = true; btn.textContent = "Starting…"; }
+    fetch("/search", {
+      method: "POST",
+      body: new URLSearchParams(new FormData(form)),
+      credentials: "same-origin",
+      keepalive: true,
+      redirect: "follow",
+    })
+      .then(function (r) { window.location.href = r.url || "/search"; })
+      .catch(function () { window.location.href = "/search"; });
+  });
+})();
+</script>
+{% if poll_job_status %}
+<script>
+(function () {
+  var successEl = document.getElementById("search-success-banner");
+  var pollErr = document.getElementById("search-poll-error");
+  var iv = setInterval(function () {
+    fetch("/search/job-status", { credentials: "same-origin" })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.error) {
+          clearInterval(iv);
+          if (successEl) successEl.classList.add("hidden");
+          if (pollErr) {
+            pollErr.textContent = data.error;
+            pollErr.classList.remove("hidden");
+          }
+          return;
+        }
+        if (!data.running) clearInterval(iv);
+      })
+      .catch(function () {});
+  }, 1500);
+})();
+</script>
+{% endif %}
+{% endblock %}

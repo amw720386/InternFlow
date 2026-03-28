@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
+  <title>{% block title %}InternFlow{% endblock %}</title>
+  {% block head %}{% endblock %}
+  <link rel="stylesheet" href="/static/css/app.css" />
+</head>
+<body class="min-h-full bg-zinc-950 text-zinc-100 antialiased">
+  <div id="nav-backdrop" class="fixed inset-0 z-40 hidden bg-black/70 backdrop-blur-[2px] lg:hidden" aria-hidden="true"></div>
+  <button type="button" id="nav-toggle"
+          class="fixed left-4 top-4 z-50 flex h-11 w-11 items-center justify-center rounded-xl border border-zinc-700/80 bg-[#09090b]/95 text-zinc-100 shadow-lg backdrop-blur-sm transition-colors hover:border-zinc-600 hover:bg-zinc-900 lg:hidden"
+          aria-expanded="false" aria-controls="app-sidebar" aria-label="Open menu">
+    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <path d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+  </button>
+  <div class="flex min-h-screen flex-col lg:flex-row">
+    {% include "components/sidebar.html" %}
+    <main class="min-w-0 flex-1 px-4 pb-8 pt-[4.25rem] lg:px-10 lg:py-10 lg:pt-10">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+  <script>
+  (function () {
+    var sidebar = document.getElementById("app-sidebar");
+    var backdrop = document.getElementById("nav-backdrop");
+    var toggle = document.getElementById("nav-toggle");
+    var closeBtn = document.getElementById("nav-close");
+    if (!sidebar || !backdrop || !toggle) return;
+    function isDesktop() {
+      return window.matchMedia("(min-width: 1024px)").matches;
+    }
+    function openNav() {
+      if (isDesktop()) return;
+      sidebar.classList.remove("-translate-x-full");
+      sidebar.classList.add("translate-x-0");
+      backdrop.classList.remove("hidden");
+      toggle.setAttribute("aria-expanded", "true");
+      document.body.classList.add("overflow-hidden");
+    }
+    function closeNav() {
+      backdrop.classList.add("hidden");
+      toggle.setAttribute("aria-expanded", "false");
+      document.body.classList.remove("overflow-hidden");
+      if (isDesktop()) {
+        sidebar.classList.remove("translate-x-0", "-translate-x-full");
+        return;
+      }
+      sidebar.classList.add("-translate-x-full");
+      sidebar.classList.remove("translate-x-0");
+    }
+    toggle.addEventListener("click", function () {
+      if (sidebar.classList.contains("-translate-x-full")) openNav();
+      else closeNav();
+    });
+    if (closeBtn) closeBtn.addEventListener("click", closeNav);
+    backdrop.addEventListener("click", closeNav);
+    sidebar.querySelectorAll("a").forEach(function (a) {
+      a.addEventListener("click", function () {
+        if (!isDesktop()) closeNav();
+      });
+    });
+    window.addEventListener("resize", function () {
+      closeNav();
+    });
+  })();
+  </script>
+</body>
+</html>

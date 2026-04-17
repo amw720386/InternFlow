@@ -2,6 +2,10 @@
 
 A small **FastAPI** app for running **People Data Labs** person searches, **enriching** matches with AI, and stepping through **LinkedIn and email drafts** before you send anything. Built for teams that care about biotech and life-science outreach but want one place to search, review, and configure copy without wiring five tools together.
 
+
+https://github.com/user-attachments/assets/5c9148c8-56d8-4677-be0c-d054aceedd46
+
+
 ---
 
 <p align="center">
